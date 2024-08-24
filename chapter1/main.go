@@ -40,12 +40,18 @@ func main() {
 	u.Pf("%v", 100)
 	u.P(a, b, c>>99)
 
-	Me := Person{
+	me := Person{
 		country:  Japan,
 		language: C | Golang | Ruby,
 	}
-	u.P(Me)
-	u.Pf("%b", Me.language)
+	u.P(me)
+	u.Pf("%b", me.language)
+	if me.language&Ruby != 0 {
+		u.P("I can speak Ruby.")
+	}
+	if me.language&Java != 0 {
+		u.P("I can speak Java.") // こっちは出力されない
+	}
 
 	// 可能な限り短縮系を使ったほうがいいが、以下はどっちでも良い
 	var hoge1 int8 = 3
