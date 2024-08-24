@@ -35,8 +35,6 @@ type Person struct {
 	language Language
 }
 
-const ()
-
 func main() {
 	u.P("chapter1")
 	u.Pf("%v", 100)
