@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/longtime1116/jitsuyo_go/u"
 )
 
@@ -58,4 +60,28 @@ func main() {
 	hoge2 := int8(3)
 	u.N(hoge1, hoge2)
 
+	src := []string{"Back", "To", "The", "Future", "Part", "III"}
+	// ループで末尾に連結していこうとすると、メモリ効率が悪い
+	// Go の文字列は不変のため、他の文字列を追加したりするたびに新しい文字列が生成されてしまう
+	var title string
+	for i, word := range src {
+		if i != 0 {
+			title += " "
+		}
+		title += word
+	}
+	u.P(title)
+	// strings.Builder を使って、確保したメモリにbyte列を書き込む
+	var builder strings.Builder
+	builder.Grow(100)
+	u.P(builder)
+	u.P(builder.Len(), builder.Cap())
+	for i, word := range src {
+		if i != 0 {
+			builder.WriteByte(' ')
+		}
+		builder.WriteString(word)
+	}
+	u.P(builder.String())
+	u.P(builder.Len(), builder.Cap())
 }
