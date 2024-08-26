@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/longtime1116/jitsuyo_go/u"
 )
 
 type Person struct {
@@ -49,4 +51,12 @@ func main() {
 		fmt.Printf("%#v\n", v)
 		fmt.Println(v.Debug())
 	}
+
+	// 後々フィールドが追加された時のことを考えると、フィールド名は省略しない方が望ましいという判断をしても良い。
+	me := Person{
+		Name:    "M",
+		Age:     121,
+		Address: "Hokkaido",
+	}
+	u.N(me)
 }
