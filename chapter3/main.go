@@ -15,6 +15,11 @@ type Student struct {
 	School string
 }
 
+// ファクトリー関数を用意するのが一般的
+func NewPerson(name string, age int) *Person {
+	return &Person{name, age}
+}
+
 func (p Person) Hello() {
 	fmt.Printf("Hello, I'm %v.\n", p.Name)
 }
@@ -41,7 +46,7 @@ func main() {
 		Name: "M",
 		Age:  121,
 	}
-	var me2 = Person{"M2", 19}
+	var me2 = NewPerson("M2", 19)
 	u.N(me)
 	u.N(me2)
 
@@ -56,4 +61,5 @@ func main() {
 	fmt.Println(s1)
 	s1.Hello() // Person のメソッドも呼び出せる
 	s1.Hello2()
+
 }
