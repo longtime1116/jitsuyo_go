@@ -17,19 +17,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, World!")
 }
 
-func main() {
-	var mutex = &sync.RWMutex{}
-
-	// curl http://localhost:8080/
-	http.HandleFunc("/", helloHandler)
-
-	// curl http://localhost:8080/comments
-	// curl http://localhost:8080/comments
-	// curl -X POST http://localhost:8080/comments -H "Content-Type: application/json" -d '{"Message": "test1", "UserName": "test_user1"}'
-
-	comments := make([]Comment, 0, 100)
-	comments = append(comments, Comment{Message: "1st message", UserName: "Sample "})
-	http.HandleFunc("/comments", func(w http.ResponseWriter, r *http.Request) {
+func newCommentsHandler(mutex *sync.RWMutex, comments *[]Comment) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		switch r.Method {
 		case http.MethodGet:
@@ -48,15 +37,30 @@ func main() {
 				return
 			}
 			mutex.Lock()
-			comments = append(comments, c)
+			*comments = append(*comments, c)
 			mutex.Unlock()
 			w.WriteHeader(http.StatusCreated)
 			w.Write([]byte(`{"status": "created"}`))
 		default:
 			http.Error(w, `{"status": "permits only GET or POST"}`, http.StatusInternalServerError)
 		}
+	}
 
-	})
+}
+
+func main() {
+	var mutex = &sync.RWMutex{}
+
+	// curl http://localhost:8080/
+	http.HandleFunc("/", helloHandler)
+
+	// curl http://localhost:8080/comments
+	// curl http://localhost:8080/comments
+	// curl -X POST http://localhost:8080/comments -H "Content-Type: application/json" -d '{"Message": "test1", "UserName": "test_user1"}'
+
+	comments := make([]Comment, 0, 100)
+	// comments = append(comments, Comment{Message: "1st message", UserName: "Sample "})
+	http.HandleFunc("/comments", newCommentsHandler(mutex, &comments))
 
 	fmt.Println("Starting server at port 8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
